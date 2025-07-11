@@ -14,8 +14,12 @@ namespace PetProject.Controllers
         }
 
         [HttpGet]
-        public void Get()
+        public async Task<IActionResult> Get()
         {
+            Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+
+            return Ok();
         }
     }
 }
