@@ -6,7 +6,7 @@ namespace PetProject.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserInfoSyncController : ControllerBase
+    public class UserInfoAsyncOldController : ControllerBase
     {
         private const string USER_FILE_PATH = "data/users.json";
         private const string LOCATIONS_FILE_PATH = "data/locations.json";
@@ -16,19 +16,32 @@ namespace PetProject.Controllers
         public ActionResult GetUserInfo()
         {
             var userId = GetRandomUserId();
-            var location = GetUserLocations(userId);
-            var game = GetUserFavoriteGame(userId);
-            return Ok(new { userId, location, game });
+            return Ok(userId.ContinueWith(user =>
+            {
+                var location = GetUserLocations(user.Result);
+                var game = GetUserFavoriteGame(user.Result);
+                return new { userId.Result, location, game };
+            }).Result);
         }
 
-        int GetRandomUserId()
+        Task<int> GetRandomUserId()
         {
             Console.WriteLine("Получение пользователя");
-            var userJson = System.IO.File.ReadAllText(USER_FILE_PATH);
-            Task.Delay(1000).Wait();
-            var userData = JsonSerializer.Deserialize<UserData>(userJson);
-            Console.WriteLine("Пользователь получен");
-            return userData.Users.First().Id;
+            var result = Task.Run(() =>
+            {
+                var userJsonTask = System.IO.File.ReadAllTextAsync(USER_FILE_PATH);
+                Task.Delay(3000).Wait();
+                return userJsonTask;
+            });
+
+            // Здесь можем выполнить другой код, пока мы ждем выполнение предыдущей таски.
+
+            return result.ContinueWith(resultTask =>
+            {
+                var userData = JsonSerializer.Deserialize<UserData>(resultTask.Result);
+                Console.WriteLine("Пользователь получен");
+                return userData.Users.First().Id;
+            });
         }
 
         string GetUserLocations(int userId)

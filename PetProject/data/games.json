@@ -1,3 +1,16 @@
 {
-
+  "Games": [
+    {
+      "UserId": 1,
+      "FavoriteGame": "The Witcher 3"
+    },
+    {
+      "UserId": 2,
+      "FavoriteGame": "Cyberpunk 2077"
+    },
+    {
+      "UserId": 3,
+      "FavoriteGame": "Minecraft"
+    }
+  ]
 }
