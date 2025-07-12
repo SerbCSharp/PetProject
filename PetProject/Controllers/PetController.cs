@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PetProject.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize("OnlyIT")]
     public class PetController : ControllerBase
     {
         private readonly ILogger<PetController> _logger;
